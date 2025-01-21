@@ -13,5 +13,23 @@
     "@serendie/style-dictionary-formatter": "^0.0.2",
     "style-dictionary": "^3.9.2",
     "style-dictionary-utils": "^2.0.7"
-  }
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/tokens.js",
+      "types": "./dist/tokens.d.ts"
+    },
+    "./panda": {
+      "import": "./dist/panda-tokens.js",
+      "types": "./dist/panda-tokens.d.ts"
+    },
+    "./token-list": {
+      "import": "./dist/token-list.js",
+      "types": "./dist/token-list.d.ts"
+    },
+    "./tokens.css": "./dist/tokens.css"
+  },
+  "files": [
+    "dist"
+  ]
 }
