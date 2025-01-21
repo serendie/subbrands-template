@@ -1,0 +1,17 @@
+{
+  "name": "@serendie/sub-brand-tokens",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate-design-tokens": "node ./buildTokens.js",
+    "sync-from-figma": "sync-from-figma",
+    "sync-to-figma": "sync-to-figma"
+  },
+  "dependencies": {
+    "@serendie/figma-utils": "^0.0.2",
+    "@serendie/style-dictionary-formatter": "^0.0.2",
+    "style-dictionary": "^3.9.2",
+    "style-dictionary-utils": "^2.0.7"
+  }
+}
