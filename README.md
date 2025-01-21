@@ -53,4 +53,50 @@ npm run sync-figma-from-json
 
 ## 生成したトークンを serendie/ui を含むプロジェクトで使う
 
-TBD
+### プロジェクトにこのリポジトリをインストールします。
+
+```bash
+# GitHubリポジトリから直接インストール
+npm install github:serendie/sub-brand-tokens
+```
+
+実際は以下のようなルールのパスになります。
+
+```bash
+npm install github:{owner}/{repo}
+```
+
+### PandaCSS のトークンをインポートします。
+
+`panda.config.js` に以下のように記述し、生成したトークンをインポートします。
+
+```ts
+import subBrandTokens from "@serendie/sub-brand-tokens/panda";
+
+// PandaCSSのtokensとtextStylesが混在しているので分離する
+const { textStyles, ...tokens } = subBrandTokens;
+// 必要に応じてtokenの内容を拡張する
+const extendedTokens = { ...tokens, sizes: tokens.spacing };
+```
+
+`panda.config.js` の `presets` に以下のように記述し、SerendiePreset を拡張します。
+
+```ts
+export default defineConfig({
+  //...snip
+  presets: [
+    SerendiePreset,
+    {
+      theme: {
+        extend: {
+          tokens: extendedTokens,
+          textStyles,
+        },
+      },
+    },
+  ],
+  //...snip
+});
+```
+
+必要に応じて `panda codegen` を実行すると、ブランドのトークンが更新されプロジェクト内で利用することができます。
