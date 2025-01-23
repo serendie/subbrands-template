@@ -6,6 +6,15 @@ Figma の local variables、または JSON ファイルに記述したデザイ�
 
 GitHub の「Use this template」から、リポジトリを作成しローカルにクローンします。
 
+## .npmrc の作成
+
+サンプルをリネームしてください。
+プライベートなレポジトリを参照する必要がある場合は\_authToken を設定してください。
+
+```bash
+cp .npmrc.example .npmrc
+```
+
 ## パッケージのインストール
 
 レポジトリのルートで以下のコマンドを実行します。
@@ -41,14 +50,6 @@ style-dictionary を使って、JSON ファイルに保存したデザイント�
 
 ```bash
 npm run generate-design-tokens
-```
-
-## JSON ファイルを Figma に同期
-
-Rest API を使って手元の JSON ファイルを Figma に同期します。
-
-```bash
-npm run sync-figma-from-json
 ```
 
 ## 生成したトークンを serendie/ui を含むプロジェクトで使う
@@ -100,3 +101,22 @@ export default defineConfig({
 ```
 
 必要に応じて `panda codegen` を実行すると、ブランドのトークンが更新されプロジェクト内で利用することができます。
+
+## JSON ファイルを Figma に同期
+
+Rest API を使って手元の JSON ファイルを Figma に同期します。
+
+```bash
+npm run sync-figma-from-json
+```
+
+### GitHub Actions で自動化
+
+.github/workflows/sync-figma-from-json.yml により、GitHub Actions で自動化することができます。
+
+GitHub Actions を実行する際にはいくつかの環境変数を設定する必要があります。
+レポジトリの設定画面から、`Secrets and variables` に以下の環境変数を設定してください。
+
+Serendie のプライベートなパッケージを利用する場合は、`ACCESS_GITHUB_PACKAGES_TOKEN` を設定してください。
+Figma の API トークンは、`SYNC_FIGMA_PERSONAL_ACCESS_TOKEN` として設定してください。
+また、`SYNC_FIGMA_FILE_KEY` には、Figma のファイルキーを設定してください。
