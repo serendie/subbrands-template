@@ -105,6 +105,8 @@ export default defineConfig({
 });
 ```
 
+[serendie/bootcamp に適用した例](https://github.com/serendie/bootcamp/compare/main...example/subbrand)
+
 必要に応じて `panda codegen` を実行すると、ブランドのトークンが更新されプロジェクト内で利用することができます。
 
 ## JSON ファイルを Figma に同期
