@@ -7,7 +7,7 @@
 [Serendie Design System (SDS)](https://serendie.design/)が提供するデザイントークンやUIコンポーネントは、[Serendie](https://www.mitsubishielectric.co.jp/serendie/)のVisual Identity (VI)を継承しています。そのため、事業ブランド(サブブランド)ごとにVIが定義されている場合は、Serendieブランドのカラーやタイポグラフィは適さない場合があります。このサブブランド対応の仕組みを使うことで、SDSの導入メリットはそのままに各事業のVIを採用することができます。
 
 - 独自のテーマを定義し、Serendie UIをテーミング
-- デザイントークンを定義したJSONファイルとFigma Variablesと同期
+- デザイントークンを定義したJSONファイルとFigma Variablesの同期
 
 <img width="100%" alt="Adaptive" src="https://github.com/user-attachments/assets/931fc675-9d18-48e2-8d9f-8d35a59e79fc" />
 
@@ -36,81 +36,82 @@ Designer --> Engineer
 Engineer -. 開発時にデザイントークンの追加変更が発生 .-> GitHubActions
 ```
 
-# Serendie UI にブランド独自のトークンを追加する
+上記フローのうち、デザイナーによる新テーマ定義が終わり、エンジニアの開発スタート以降を詳しく紹介します。
 
-Figma の local variables、または JSON ファイルに記述したデザイントークンを、PandaCSS のトークンや CSS 変数などに変換し、ブランド独自のトークンを serendie/ui を使ったプロジェクトに追加することができます。
+## 事前準備
 
-## 初期設定
+### サブブランド用のプライベートリポジトリ作成
 
-GitHub の「Use this template」から、リポジトリを作成しローカルにクローンします。
+> [!WARNING]
+> Serendieチーム内にリポジトリを追加する際は、SDSチームに依頼してください。
+> 仕組み上は各事業部で管理するGitリポジトリ環境等でも利用可能です (GitHub Actions除く)
 
-## .npmrc の作成
+本リポジトリの[Use this template](https://github.com/new?owner=serendie&template_name=subbrands-template&template_owner=serendie) から、本リポジトリを雛形として新規リポジトリを作成できます。ここで作成したリポジトリで、サブブランド用デザイントークンを管理します。
 
-サンプルをリネームしてください。
-プライベートなレポジトリを参照する必要がある場合は\_authToken を設定してください。
-(すでに同様の設定がローカルにされている場合は必要ありません)
+プライベートリポジトリ作成後、ローカルにcloneしてください。
+
+### .npmrc の作成 [draft]
+
+サンプルをリネームしてください。 プライベートなレポジトリを参照する必要がある場合は_authToken を設定してください。 (すでに同様の設定がローカルにされている場合は必要ありません)
 
 ```bash
 cp .npmrc.example .npmrc
 ```
 
-## パッケージのインストール
+### パッケージのインストール
 
-レポジトリのルートで以下のコマンドを実行します。
+作成したサブブランドプロジェクト内のルートで以下のコマンドを実行します。
 
 ```bash
 npm install
 ```
 
-## 環境変数の設定
+### 環境変数の設定
 
-Figma の API トークンとファイルキーを環境変数に設定します。
+デザイントークンの同期のため、読み込み/書き込み先のFigmaファイルを指定します。サンプルをリネームして、次の2つを設定してください。
 
 ```bash
 cp .env.example .env
 ```
 
-- PERSONAL_ACCESS_TOKEN
-  - Figma の API トークン
-- FILE_KEY
-  - Figma のファイルキー
+- `PERSONAL_ACCESS_TOKEN`
+  - Variablesの[Read/Write Scope](https://www.figma.com/developers/api#authentication-scopes)を有するFigmaのpersonal access token
+- `FILE_KEY`
+  - サブブランド用の新テーマ (Variablesモード) が含まれるFigmaファイルのKey
+  - FigmaファイルのURLに含まれます (`https://www.figma.com/file/{FILE_KEY}/...`)
 
-## Figma からデータを取得
+### Figmaからデザイントークンを取得
 
-Rest API を使って Figma のデータを取得し、JSON ファイルに保存します。
+Figma REST API を使って、Figma Variablesの内容をJSONファイルとして書き出します。デザイントークンの仕様については[こちら](https://github.com/serendie/serendie/tree/main/design-tokens#%E4%BB%95%E6%A7%98)を参照してください。
 
 ```bash
 npm run sync-figma-to-json
 ```
 
-## デザイントークンの生成
+### デザイントークンのビルド
 
-style-dictionary を使って、JSON ファイルに保存したデザイントークンを PandaCSS のトークンや CSS 変数などに変換します。
+[style-dictionary-formatter](https://github.com/serendie/serendie/tree/main/style-dictionary-formatter)を使い、JSONファイルのデザイントークンを、Panda CSS用のトークンやCSS変数などに変換します。
+各種トークンファイルは`dist`ディレクトリに生成されます。それらのファイルをコミットしてプッシュしてください。
 
 ```bash
 npm run generate-design-tokens
 ```
 
-## 生成したトークンを serendie/ui を含むプロジェクトで使う
+## 各プロジェクト内でサブブランド用デザイントークンを使う
 
-各種トークンファイルは dist ディレクトリに生成されます。
-それらのファイルをコミットしてプッシュしてください。
-外部プロジェクトではこれらのファイルをインストールして使用します。
+ここからはサブブランド用デザイントークンを、アプリケーション内で利用する手順を紹介します。
 
-### プロジェクトにこのリポジトリをインストールします。
+### 各プロジェクトにこのリポジトリをインストールします。
 
-```bash
-# GitHubリポジトリから直接インストール
-npm install github:serendie/sub-brand-tokens
-```
-
-実際は以下のようなルールのパスになります。
+サブブランド用リポジトリを指定して、npm installしてください。`{your-subbrand-tokens}`はここまでで作成したリポジトリの名前に置き換えてください。
 
 ```bash
-npm install github:{owner}/{repo}
+npm install github:serendie/{your-subbrand-tokens}
 ```
 
-### PandaCSS のトークンをインポートします。
+### Panda CSSでの利用
+
+ここではPanda CSSを利用した例を紹介します。[Serendie本体のデザイントークン](https://github.com/serendie/serendie/tree/main/design-tokens)と同じように、CSS変数などでもテーミングを行うことができます。
 
 `panda.config.js` に以下のように記述し、生成したトークンをインポートします。
 
@@ -147,9 +148,17 @@ export default defineConfig({
 
 必要に応じて `panda codegen` を実行すると、ブランドのトークンが更新されプロジェクト内で利用することができます。
 
-## JSON ファイルを Figma に同期
+## Figma Variablesへの書き込み
 
-Rest API を使って手元の JSON ファイルを Figma に同期します。
+デザイントークンを開発/デザイン間の共通言語とするため、開発中にデザイントークン(JSONファイル)に変更が加わった際は、Figma側にも反映してください。
+
+> [!IMPORTANT]
+> Figma Variablesの仕様上の制約から、タイポグラフィ及びシャドウに関するトークンはExport(Figma Variablesからの書き出し)の対象外としています。
+> 特にタイポグラフィに変更を加えたいケースは、JSONファイルに変更を加えて、ImportすることでFigma側と同期してください。
+
+### Import Figma Variables from JSON
+
+下記コマンドによりFigma REST API を使って手元の JSON ファイルを Figma に同期します。
 
 ```bash
 npm run sync-figma-from-json
@@ -157,11 +166,9 @@ npm run sync-figma-from-json
 
 ### GitHub Actions で自動化
 
-.github/workflows/sync-figma-from-json.yml により、GitHub Actions で自動化することができます。
+`.github/workflows/sync-figma-from-json.yml`により、GitHub Actionsで上記を自動化することができます。
 
-GitHub Actions を実行する際にはいくつかの環境変数を設定する必要があります。
-レポジトリの設定画面から、`Secrets and variables` に以下の環境変数を設定してください。
+GitHub Actions を実行する際にはいくつかの環境変数を設定する必要があります。レポジトリの設定画面から、`Secrets and variables` に以下の環境変数を設定してください。
 
 Serendie のプライベートなパッケージを利用する場合は、`ACCESS_GITHUB_PACKAGES_TOKEN` を設定してください。
-Figma の API トークンは、`SYNC_FIGMA_PERSONAL_ACCESS_TOKEN` として設定してください。
-また、`SYNC_FIGMA_FILE_KEY` には、Figma のファイルキーを設定してください。
+Figma の API トークンは、`SYNC_FIGMA_PERSONAL_ACCESS_TOKEN` として設定してください。また、`SYNC_FIGMA_FILE_KEY` には、Figma のファイルキーを設定してください。
