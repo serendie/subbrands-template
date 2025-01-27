@@ -1,3 +1,41 @@
+# SDS SubBrands Template
+
+> [!WARNING]
+> この内容は三菱電機社内での利用を想定しています。Figma REST APIをベースにしており、Figmaのエンタープライズプラン契約が必要になります。
+> 利用時にはSDSチームのサポートを受けてください。
+
+[Serendie Design System (SDS)](https://serendie.design/)が提供するデザイントークンやUIコンポーネントは、[Serendie](https://www.mitsubishielectric.co.jp/serendie/)のVisual Identity (VI)を継承しています。そのため、事業ブランド(サブブランド)ごとにVIが定義されている場合は、Serendieブランドのカラーやタイポグラフィは適さない場合があります。このサブブランド対応の仕組みを使うことで、SDSの導入メリットはそのままに各事業のVIを採用することができます。
+
+- 独自のテーマを定義し、Serendie UIをテーミング
+- デザイントークンを定義したJSONファイルとFigma Variablesと同期
+
+<img width="100%" alt="Adaptive" src="https://github.com/user-attachments/assets/931fc675-9d18-48e2-8d9f-8d35a59e79fc" />
+
+## Flow
+
+```mermaid
+flowchart TB
+subgraph Designer
+  direction LR
+  d1("Serendie UI KitをForkする(Figma)") --> d2("Local Variablesにサブブランド用テーマを追加する") --> d3("Serendie UIに新テーマを適用する")
+end
+subgraph Engineer
+  e1("**SubBrand PJ Reposを作成**
+サブブランドごとに本reposをテンプレートとして作成") --> e2("**Export Tokens from Figma**
+Figmaから新テーマを含むVariablesを書き出し") -- build/push --> e3("**各アプリにインストール**
+ビルド済み成果物を含むSubBrand PJ Reposを指定") --> e4("**テーミング**
+Serendie UIを新テーマでthemingしアプリ実装")
+end
+subgraph GitHubActions
+ ed1("Pull Request") --> ed2("**Import Tokens to Figma**
+JSONの内容をFigma Variablesに書き込み")
+end
+
+a("サブブランド対応の必要性を検討") --> Designer
+Designer --> Engineer
+Engineer -. 開発時にデザイントークンの追加変更が発生 .-> GitHubActions
+```
+
 # Serendie UI にブランド独自のトークンを追加する
 
 Figma の local variables、または JSON ファイルに記述したデザイントークンを、PandaCSS のトークンや CSS 変数などに変換し、ブランド独自のトークンを serendie/ui を使ったプロジェクトに追加することができます。
