@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@serendie/figma-utils": "^0.0.3",
-    "@serendie/style-dictionary-formatter": "^0.0.2",
+    "@serendie/style-dictionary-formatter": "^0.0.3",
     "style-dictionary": "^3.9.2",
     "style-dictionary-utils": "^2.0.7"
   },
