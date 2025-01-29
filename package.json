@@ -2,6 +2,7 @@
   "name": "@serendie/sub-brand-tokens",
   "version": "0.0.1",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "generate-design-tokens": "node ./buildTokens.js",
